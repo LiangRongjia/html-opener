@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML 文件打开器</title>
+  </head>
+
+  <body>
+    <input type="file" />
+  </body>
+
+  <script>
+    // @ts-check
+    /** @type { (ele: HTMLInputElement) => Promise<void> } */
+    const tryOpenHtml = async (ele) => {
+      try {
+        const file = ele.files?.item(0);
+
+        if (!file || !file.name.endsWith(".html")) {
+          return;
+        }
+
+        const fileStr = await file.text();
+
+        const blob = new Blob([fileStr], { type: "text/html" });
+
+        const url = URL.createObjectURL(blob);
+
+        window.location.href = url;
+      } catch (e) {
+        document.body.appendChild(
+          document.createTextNode("Error:" + e?.message)
+        );
+      }
+    };
+
+    document.querySelector("input")?.addEventListener("change", function () {
+      tryOpenHtml(this);
+    });
+  </script>
+</html>
